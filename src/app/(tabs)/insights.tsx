@@ -13,6 +13,9 @@ import { Typography } from '@/theme/typography';
 import { calculateStreak } from '@/utils/dateHelpers';
 import { format, subDays } from 'date-fns';
 
+import { PillButton } from '@/components/ui/PillButton';
+import { exportData, importData } from '@/utils/backup';
+
 export default function InsightsScreen() {
     const insets = useSafeAreaInsets();
     const { habits } = useHabitStore();
@@ -68,6 +71,15 @@ export default function InsightsScreen() {
                 <ReadingLineChart data={readingData} percentChange={percentChangeReading} />
                 <FitnessBarChart data={fitnessData} />
 
+                {/* Data Management */}
+                <View style={styles.dataSection}>
+                    <Text style={[Typography.heading3, { color: Colors.textPrimary, marginBottom: 12 }]}>Data Management</Text>
+                    <View style={styles.dataButtons}>
+                        <PillButton label="Export Backup" onPress={exportData} active={true} style={{ flex: 1 }} />
+                        <PillButton label="Restore Backup" onPress={importData} style={{ flex: 1 }} />
+                    </View>
+                </View>
+
             </ScrollView>
         </View>
     );
@@ -117,5 +129,15 @@ const styles = StyleSheet.create({
         color: Colors.textMuted,
         marginTop: 4,
         textAlign: 'center',
+    },
+    dataSection: {
+        marginTop: 24,
+        backgroundColor: Colors.bgCard,
+        padding: 16,
+        borderRadius: 16,
+    },
+    dataButtons: {
+        flexDirection: 'row',
+        gap: 12,
     },
 });
