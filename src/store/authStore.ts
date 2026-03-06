@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 interface AuthState {
     isUnlocked: boolean;
+    isInitialized: boolean;
     pin: string | null;
     failedPinAttempts: number;
     lockUntil: number | null;
@@ -15,6 +16,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
     isUnlocked: false,
+    isInitialized: false,
     pin: null,
     failedPinAttempts: 0,
     lockUntil: null,
@@ -38,7 +40,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const pin = await SecureStore.getItemAsync('app_pin');
             set({ pin });
         } catch (e) {
-            // Ignore
+            console.warn('Failed to load auth state:', e);
+        } finally {
+            set({ isInitialized: true });
         }
     },
 }));

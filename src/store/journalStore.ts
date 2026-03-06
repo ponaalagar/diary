@@ -1,4 +1,4 @@
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
 export interface JournalEntry {
@@ -15,7 +15,6 @@ interface JournalState {
     loadEntries: () => Promise<void>;
 }
 
-// Helper to encrypt/decrypt (using SecureStore for now)
 const JOURNAL_KEY = 'journal_entries';
 
 export const useJournalStore = create<JournalState>((set, get) => ({
@@ -25,14 +24,14 @@ export const useJournalStore = create<JournalState>((set, get) => ({
         const id = entries[date]?.id || Math.random().toString(36).substring(7);
         entries[date] = { id, date, content, timestamp: Date.now() };
 
-        // Save to SecureStore
-        await SecureStore.setItemAsync(JOURNAL_KEY, JSON.stringify(entries));
+        // Save to AsyncStorage (no size limit unlike SecureStore's 2KB on Android)
+        await AsyncStorage.setItem(JOURNAL_KEY, JSON.stringify(entries));
         set({ entries });
     },
     getEntry: (date) => get().entries[date],
     loadEntries: async () => {
         try {
-            const data = await SecureStore.getItemAsync(JOURNAL_KEY);
+            const data = await AsyncStorage.getItem(JOURNAL_KEY);
             if (data) {
                 set({ entries: JSON.parse(data) });
             }

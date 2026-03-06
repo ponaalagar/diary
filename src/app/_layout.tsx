@@ -16,7 +16,7 @@ export default function RootLayout() {
         Manrope_700Bold,
     });
 
-    const { isUnlocked, loadInitialState } = useAuthStore();
+    const { isUnlocked, isInitialized, loadInitialState } = useAuthStore();
     const { loadEntries } = useJournalStore();
     const { loadHabits } = useHabitStore();
     const segments = useSegments();
@@ -31,14 +31,16 @@ export default function RootLayout() {
         init();
     }, []);
 
+    // Hide splash screen only when BOTH fonts and store data are ready
     useEffect(() => {
-        if (fontsLoaded || fontError) {
+        if ((fontsLoaded || fontError) && isInitialized) {
             SplashScreen.hideAsync();
         }
-    }, [fontsLoaded, fontError]);
+    }, [fontsLoaded, fontError, isInitialized]);
 
+    // Navigation guard — only run after everything is ready
     useEffect(() => {
-        if (!fontsLoaded) return;
+        if (!fontsLoaded || !isInitialized) return;
 
         const inAuthGroup = segments[0] === 'auth';
 
@@ -49,7 +51,7 @@ export default function RootLayout() {
             // Redirect away from the login page.
             router.replace('/(tabs)/diary');
         }
-    }, [isUnlocked, segments, fontsLoaded]);
+    }, [isUnlocked, segments, fontsLoaded, isInitialized]);
 
     if (!fontsLoaded && !fontError) {
         return null;
@@ -62,3 +64,4 @@ export default function RootLayout() {
         </Stack>
     );
 }
+

@@ -24,7 +24,7 @@ export function FitnessBarChart({ data }: FitnessBarChartProps) {
                     width={width - 48 - 32 - 16}
                     height={160}
                     frontColor={Colors.productivity} // spec said fitness chart uses productivity color
-                    borderRadius={6}
+                    //borderRadius={6}
                     hideRules
                     hideYAxisText
                     yAxisThickness={0}
